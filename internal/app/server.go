@@ -3,6 +3,7 @@ package app
 import (
 	"licensetogo/internal/handlers"
 	licensestorage "licensetogo/internal/license_storage"
+	"licensetogo/internal/middleware"
 	"os"
 	"strings"
 
@@ -12,11 +13,15 @@ import (
 	"github.com/pocketbase/pocketbase/plugins/migratecmd"
 )
 
-const DEFAULT_COLLECTION = "license"
+const (
+	DEFAULT_COLLECTION  = "license"
+	API_KEYS_COLLECTION = "apikey"
+)
 
 type LicenseToGoServer struct {
 	app            *pocketbase.PocketBase
 	licenseManager *keystogo.Manager
+	apiKeyManager  *keystogo.Manager
 }
 
 func NewLicenseToGoServer() (*LicenseToGoServer, error) {
@@ -24,10 +29,12 @@ func NewLicenseToGoServer() (*LicenseToGoServer, error) {
 	// Using default collection name for now, support for multiple license collections
 	// will be added in the future
 	licenseManager := keystogo.NewManager(licensestorage.NewPocketbaseStorage(DEFAULT_COLLECTION, app))
+	apiKeyManager := keystogo.NewManager(licensestorage.NewPocketbaseStorage(API_KEYS_COLLECTION, app))
 
 	return &LicenseToGoServer{
 		app:            app,
 		licenseManager: licenseManager,
+		apiKeyManager:  apiKeyManager,
 	}, nil
 }
 
@@ -36,11 +43,20 @@ func (lts *LicenseToGoServer) Start() error {
 		return err
 	}
 
+	middleware.SetManager(lts.apiKeyManager)
+
 	// Register license handlers
 	lts.app.OnServe().BindFunc(func(e *core.ServeEvent) error {
-		// TODO: Handle multiple license collections
-		licenseHandler := handlers.NewLicenseHandler(DEFAULT_COLLECTION, lts.licenseManager)
+		// licenses could be requested via endpoint, for that we have the option to generate an api key.
+		licenseHandler := handlers.NewLicenseHandler(DEFAULT_COLLECTION, lts.app)
+		// Api keys could only be created by users that signin.
+		apiKeyHandler := handlers.NewApiKeyHandlers(API_KEYS_COLLECTION, lts.app)
+
 		if err := licenseHandler.RegisterRoutes(e); err != nil {
+			return err
+		}
+
+		if err := apiKeyHandler.RegisterRoutes(e); err != nil {
 			return err
 		}
 

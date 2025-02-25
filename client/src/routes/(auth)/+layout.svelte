@@ -34,19 +34,19 @@
 				tabindex="0"
 				class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
 			>
-				<li><a>Licenses</a></li>
-				<li><a>Settings</a></li>
+				<li><a href="/license-manager">Licenses</a></li>
+				<li><a href="/apikeys">API Keys</a></li>
 			</ul>
 		</div>
-		<a class="btn btn-ghost text-xl">
+		<a class="btn btn-ghost text-xl" href="/license-manager">
 			<ShieldHalf class="h-6 w-6" />
 			LicenseToGo
 		</a>
 	</div>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal px-1">
-			<li><a>Licenses</a></li>
-			<li><a>Settings</a></li>
+			<li><a href="/license-manager">Licenses</a></li>
+			<li><a href="/apikeys">API Keys</a></li>
 		</ul>
 	</div>
 	<div class="navbar-end">

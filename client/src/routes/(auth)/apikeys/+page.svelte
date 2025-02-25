@@ -1,6 +1,6 @@
 <script>
 	import { APP_NAME } from '$lib/constants';
-	import { Search, Plus, Check, X, EllipsisVertical, XCircle, Info } from 'lucide-svelte';
+	import { Search, Plus, Check, X, EllipsisVertical, XCircle } from 'lucide-svelte';
 	import dayjs from 'dayjs';
 	import { getPagination } from '$lib/utils/pagination.js';
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
@@ -32,7 +32,7 @@
 	 */
 	const handleToggleActive = (l) => async () => {
 		const res = await catchPromise(
-			pb.collection('license').update(l.id, {
+			pb.collection('apikey').update(l.id, {
 				active: !l.active
 			})
 		);
@@ -46,12 +46,12 @@
 	};
 
 	const handleCreateClick = () => {
-		goto('/license-manager/create');
+		goto('/apikeys/create');
 	};
 </script>
 
 <svelte:head>
-	<title>License Manager | {APP_NAME}</title>
+	<title>API Keys | {APP_NAME}</title>
 </svelte:head>
 
 <div class="mt-8">
@@ -69,13 +69,6 @@
 			<span class="loading loading-dots"></span>
 		</div>
 	{:then lics}
-		<!-- <div class="alert alert-info"> -->
-		<!-- 	<Info /> -->
-		<!-- 	<span> -->
-		<!-- 		Licenses are meant to be used by other applications, you can create as many licenses as you -->
-		<!-- 		want. -->
-		<!-- 	</span> -->
-		<!-- </div> -->
 		{#if lics.items?.length > 0 || filter?.length > 0}
 			<div class="flex w-full justify-end gap-4 p-4">
 				<label class="input input-bordered flex items-center gap-0.5">
@@ -91,7 +84,7 @@
 				<span class="divider divider-horizontal divide-base-300"></span>
 				<button class="btn btn-outline" onclick={handleCreateClick}>
 					<Plus class="h-4 w-4" />
-					Create License
+					Create API Key
 				</button>
 			</div>
 			<table class="table">
@@ -99,11 +92,8 @@
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>Permissions</th>
-						<th>Metadata</th>
 						<th>Active</th>
-						<th>Expires At</th>
-						<th>Last Used At</th>
+						<th>Created</th>
 						<th class="w-24"></th>
 					</tr>
 				</thead>
@@ -111,8 +101,6 @@
 					{#each lics.items as l}
 						<tr>
 							<td>{l.name}</td>
-							<td>{l.permissions?.toString() || 'N/A'}</td>
-							<td>{l.metadata?.toString() || 'N/A'}</td>
 							<td>
 								<div class="px-2">
 									{#if l.active}
@@ -122,8 +110,7 @@
 									{/if}
 								</div>
 							</td>
-							<td>{l.expires ? dayjs(l.expires).format('DD/MM/YYYY') : '-'}</td>
-							<td>{l.lastUsed ? dayjs(l.lastUsed).format('DD/MM/YYYY') : '-'}</td>
+							<td>{l.created ? dayjs(l.created).format('DD/MM/YYYY') : '-'}</td>
 							<td>
 								<div class="dropdown dropdown-end">
 									<div tabindex="0" role="button" class="btn m-1">
@@ -172,11 +159,11 @@
 		{:else}
 			<div class="flex justify-center p-4">
 				<div class="flex w-56 flex-col gap-4">
-					<h1 class="text-center text-lg font-bold">No license found.</h1>
-					<p class="text-center">Create it by clicking the button below.</p>
+					<h1 class="text-center text-lg font-bold">No API Key found.</h1>
+					<p class="text-center">Feel free to create as many API keys as required.</p>
 					<button class="btn btn-primary" onclick={handleCreateClick}>
 						<Plus class="h-4 w-4" />
-						Create License
+						Create API Key
 					</button>
 				</div>
 			</div>

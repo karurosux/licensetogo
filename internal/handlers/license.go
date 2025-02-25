@@ -1,31 +1,36 @@
 package handlers
 
 import (
+	licensestorage "licensetogo/internal/license_storage"
+	"licensetogo/internal/middleware"
 	"strconv"
 	"time"
 
 	"github.com/karurosux/keystogo/pkg/keystogo"
 	"github.com/karurosux/keystogo/pkg/models"
-	"github.com/pocketbase/pocketbase/apis"
+	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
 )
 
 type LicenseHandler struct {
-	collectionName string
-	manager        *keystogo.Manager
+	collectionName       string
+	manager              *keystogo.Manager
+	protectionMiddleware func(e *core.RequestEvent) error
 }
 
-func NewLicenseHandler(collectionName string, manager *keystogo.Manager) *LicenseHandler {
+func NewLicenseHandler(collectionName string, app *pocketbase.PocketBase) *LicenseHandler {
+	m := keystogo.NewManager(licensestorage.NewPocketbaseStorage(collectionName, app))
+	pm := middleware.ApiKeyOrUserMiddleware()
 	return &LicenseHandler{
-		collectionName: collectionName,
-		manager:        manager,
+		collectionName:       collectionName,
+		manager:              m,
+		protectionMiddleware: pm,
 	}
 }
 
 func (lh *LicenseHandler) RegisterRoutes(e *core.ServeEvent) error {
-	requiresAuthMiddleware := apis.RequireAuth(lh.collectionName)
-	e.Router.GET("/api/"+lh.collectionName, lh.Get).Bind(requiresAuthMiddleware)
-	e.Router.POST("/api/"+lh.collectionName, lh.Create)
+	e.Router.GET("/api/"+lh.collectionName, lh.Get).BindFunc(lh.protectionMiddleware)
+	e.Router.POST("/api/"+lh.collectionName, lh.Create).BindFunc(lh.protectionMiddleware)
 	return nil
 }
 
