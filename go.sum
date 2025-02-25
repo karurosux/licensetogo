@@ -141,6 +141,8 @@ github.com/karurosux/keystogo v0.3.0 h1:tRA76je4seFRxXFK8FQQ5y5I/GnhKbw/psmpMVaN
 github.com/karurosux/keystogo v0.3.0/go.mod h1:YgswemA/XvIG+bpz1A7pEBcV9Qm6K2JHdj0v+daIfeI=
 github.com/karurosux/keystogo v0.3.1 h1:mSflAvO2jmp8wZEvSPEO4/BC3zQnIS4wILrT+n5TjM8=
 github.com/karurosux/keystogo v0.3.1/go.mod h1:YgswemA/XvIG+bpz1A7pEBcV9Qm6K2JHdj0v+daIfeI=
+github.com/karurosux/keystogo v0.3.2 h1:mnkVS2HSfPaV2jIVRctYwpbdUcnk9mvwwC4AfJdroKc=
+github.com/karurosux/keystogo v0.3.2/go.mod h1:YgswemA/XvIG+bpz1A7pEBcV9Qm6K2JHdj0v+daIfeI=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=

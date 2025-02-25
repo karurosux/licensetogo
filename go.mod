@@ -3,7 +3,7 @@ module licensetogo
 go 1.23.2
 
 require (
-	github.com/karurosux/keystogo v0.3.1
+	github.com/karurosux/keystogo v0.3.2
 	github.com/pocketbase/dbx v1.11.0
 	github.com/pocketbase/pocketbase v0.25.4
 )

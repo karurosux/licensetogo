@@ -1,13 +1,13 @@
 <script>
-	import { APP_NAME } from '$lib/constants';
-	import { Search, Plus, Check, X, EllipsisVertical, XCircle, Info } from 'lucide-svelte';
-	import dayjs from 'dayjs';
-	import { getPagination } from '$lib/utils/pagination.js';
-	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
-	import lo from 'lodash';
-	import { pb } from '$lib/utils/pb.js';
-	import { catchPromise } from '$lib/utils/catch-promise.js';
 	import { goto } from '$app/navigation';
+	import { APP_NAME } from '$lib/constants';
+	import { catchPromise } from '$lib/utils/catch-promise.js';
+	import { getPagination } from '$lib/utils/pagination.js';
+	import { pb } from '$lib/utils/pb.js';
+	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
+	import dayjs from 'dayjs';
+	import lo from 'lodash';
+	import { Check, EllipsisVertical, Plus, Search, X, XCircle } from 'lucide-svelte';
 
 	let { data } = $props();
 	let filter = $state(data.query?.filter || '');
@@ -123,7 +123,7 @@
 								</div>
 							</td>
 							<td>{l.expires ? dayjs(l.expires).format('DD/MM/YYYY') : '-'}</td>
-							<td>{l.lastUsed ? dayjs(l.lastUsed).format('DD/MM/YYYY') : '-'}</td>
+							<td>{l.lastused ? dayjs(l.lastused).format('DD/MM/YYYY') : '-'}</td>
 							<td>
 								<div class="dropdown dropdown-end">
 									<div tabindex="0" role="button" class="btn m-1">

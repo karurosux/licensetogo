@@ -11,7 +11,7 @@ export const load = async ({ url, locals }) => {
 	 */
 	const pb = locals.pb;
 	const options = {
-		fields: 'id,name,permissions,metadata,active,expires,lastUsed',
+		fields: 'id,name,permissions,metadata,active,expires,lastused',
 		order: '-created'
 	};
 

@@ -70,13 +70,18 @@ func (p *PocketbaseStorage) Get(hashedKey string) (*models.APIKey, error) {
 	expires := record.GetDateTime("expires").Time()
 	lastused := record.GetDateTime("lastused").Time()
 	apiKey := &models.APIKey{
-		ID:         record.Id,
-		Key:        hashedKey,
-		Name:       record.GetString("name"),
-		ExpiresAt:  &expires,
-		LastUsedAt: &lastused,
-		CreatedAt:  record.GetDateTime("created").Time(),
-		Active:     record.GetBool("active"),
+		ID:        record.Id,
+		Name:      record.GetString("name"),
+		CreatedAt: record.GetDateTime("created").Time(),
+		Active:    record.GetBool("active"),
+	}
+
+	if !expires.IsZero() {
+		apiKey.ExpiresAt = &expires
+	}
+
+	if !lastused.IsZero() {
+		apiKey.LastUsedAt = &lastused
 	}
 
 	if err := record.UnmarshalJSONField("permissions", &apiKey.Permissions); err != nil {

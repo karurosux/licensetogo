@@ -31,7 +31,22 @@ func NewLicenseHandler(collectionName string, app *pocketbase.PocketBase) *Licen
 func (lh *LicenseHandler) RegisterRoutes(e *core.ServeEvent) error {
 	e.Router.GET("/api/"+lh.collectionName, lh.Get).BindFunc(lh.protectionMiddleware)
 	e.Router.POST("/api/"+lh.collectionName, lh.Create).BindFunc(lh.protectionMiddleware)
+	e.Router.POST("/api/"+lh.collectionName+"/validate", lh.Validate)
 	return nil
+}
+
+func (lh *LicenseHandler) Validate(e *core.RequestEvent) error {
+	body := &struct {
+		Key         string              `json:"key" form:"key"`
+		Permissions []models.Permission `json:"permissions" form:"permissions"`
+	}{}
+
+	if err := e.BindBody(body); err != nil {
+		return e.BadRequestError("Failed to read request body.", err)
+	}
+
+	res := lh.manager.ValidateKey(body.Key, body.Permissions)
+	return e.JSON(200, res)
 }
 
 func (lh *LicenseHandler) Create(e *core.RequestEvent) error {
