@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"github.com/karurosux/keystogo/pkg/keystogo"
-	"github.com/karurosux/keystogo/pkg/models"
 	"github.com/pocketbase/pocketbase/core"
 )
 
@@ -23,12 +22,12 @@ func ApiKeyOrUserMiddleware() func(e *core.RequestEvent) error {
 		// Check  if license key is present
 		key := e.Request.Header.Get("apikey")
 		if key == "" {
-			return e.UnauthorizedError("Key not found.", nil)
+			return e.UnauthorizedError("API key not found.", nil)
 		}
 
-		res := manager.ValidateKey(key, []models.Permission{})
+		res := manager.ValidateKey(key, nil)
 		if res.Error != nil || !res.Valid {
-			return e.UnauthorizedError("Ivalid api key.", res.Error)
+			return e.UnauthorizedError("Invalid API key.", res.Error)
 		}
 
 		return e.Next()

@@ -50,14 +50,11 @@ func (lh *LicenseHandler) Validate(e *core.RequestEvent) error {
 }
 
 func (lh *LicenseHandler) Create(e *core.RequestEvent) error {
-	user := e.Auth
-	if user == nil {
-		return e.UnauthorizedError("User not authenticated.", nil)
-	}
-
 	body := &struct {
-		Name    string  `json:"name" form:"name"`
-		Expires *string `json:"expires" form:"expires"`
+		Name        string               `json:"name" form:"name"`
+		Expires     *string              `json:"expires" form:"expires"`
+		Permissions *[]models.Permission `json:"permissions" form:"permissions"`
+		Metadata    *map[string]any      `json:"metadata" form:"metadata"`
 	}{}
 
 	if err := e.BindBody(body); err != nil {
@@ -73,7 +70,7 @@ func (lh *LicenseHandler) Create(e *core.RequestEvent) error {
 		parsedExpires = &parsed
 	}
 
-	_, key, err := lh.manager.GenerateApiKey(body.Name, nil, nil, parsedExpires)
+	_, key, err := lh.manager.GenerateApiKey(body.Name, body.Permissions, body.Metadata, parsedExpires)
 	if err != nil {
 		return e.BadRequestError("Failed to generate API key.", err)
 	}
