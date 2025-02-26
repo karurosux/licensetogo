@@ -7,11 +7,13 @@
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
 	import dayjs from 'dayjs';
 	import lo from 'lodash';
-	import { Check, EllipsisVertical, Plus, Search, X, XCircle } from 'lucide-svelte';
+	import { Check, EllipsisVertical, Plus, Search, X, XCircle, Scroll } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
 	let filter = $state(data.query?.filter || '');
 	let error = $state('');
+	let showCreateNew = $state(false);
 	let pagination = $derived(
 		data.license?.then((lic) => getPagination(lic.totalItems, lic.perPage, lic.page - 1))
 	);
@@ -48,15 +50,30 @@
 	const handleCreateClick = () => {
 		goto('/license-manager/create');
 	};
+
+	onMount(() => {
+		data.license.then((lic) => (showCreateNew = lic.totalItems === 0));
+	});
 </script>
 
 <svelte:head>
 	<title>License Manager | {APP_NAME}</title>
 </svelte:head>
 
-<div class="mt-8">
+<div class="breadcrumbs bg-base-200 w-full p-6 text-sm">
+	<ul>
+		<li>
+			<a>
+				<Scroll />
+				License Manager
+			</a>
+		</li>
+	</ul>
+</div>
+
+<div>
 	{#if error}
-		<div role="alert" class="alert alert-error">
+		<div role="alert" class="alert alert-error rounded-none">
 			<XCircle />
 			<span>{error}</span>
 			<div>
@@ -64,39 +81,33 @@
 			</div>
 		</div>
 	{/if}
+
+	<div class="border-y-base-300 bg-base-200 flex w-full flex-row rounded-none border-y p-8">
+		<label class="input input-md bg-base-100 border-base-300 flex flex-1 items-center gap-0.5">
+			<Search class="h-5 w-5" />
+			<input
+				type="text"
+				class="grow"
+				placeholder="Search by License Name"
+				bind:value={filter}
+				oninput={handleFilterChange}
+			/>
+		</label>
+		<span class="divider divider-horizontal divide-base-300"></span>
+		<button class="btn btn-md btn-primary" onclick={handleCreateClick}>
+			<Plus class="h-4 w-4" />
+			Create License
+		</button>
+	</div>
 	{#await data.license}
 		<div class="flex w-full items-center justify-center">
-			<span class="loading loading-dots"></span>
+			<span class="loyding loading-dots"></span>
 		</div>
 	{:then lics}
-		<!-- <div class="alert alert-info"> -->
-		<!-- 	<Info /> -->
-		<!-- 	<span> -->
-		<!-- 		Licenses are meant to be used by other applications, you can create as many licenses as you -->
-		<!-- 		want. -->
-		<!-- 	</span> -->
-		<!-- </div> -->
-		{#if lics.items?.length > 0 || filter?.length > 0}
-			<div class="flex w-full justify-end gap-4 p-4">
-				<label class="input input-bordered flex items-center gap-0.5">
-					<Search class="h-5 w-5" />
-					<input
-						type="text"
-						class="grow"
-						placeholder="Search..."
-						bind:value={filter}
-						oninput={handleFilterChange}
-					/>
-				</label>
-				<span class="divider divider-horizontal divide-base-300"></span>
-				<button class="btn btn-outline" onclick={handleCreateClick}>
-					<Plus class="h-4 w-4" />
-					Create License
-				</button>
-			</div>
-			<table class="table">
+		{#if lics.items?.length > 0}
+			<table class="bg-base-200 table-md table rounded-none">
 				<!-- head -->
-				<thead>
+				<thead class="bg-base-300">
 					<tr>
 						<th>Name</th>
 						<th>Permissions</th>
@@ -149,7 +160,7 @@
 
 			{#await pagination then p}
 				{#if p.pages > 1}
-					<div class="join mt-4 flex justify-center">
+					<div class="join border-y-base-300 flex justify-center border-y p-8">
 						{#if p.prev}
 							<button class="join-item btn" onclick={handlePageChange(p.prev)}>Prev</button>
 						{/if}
@@ -170,14 +181,12 @@
 				{/if}
 			{/await}
 		{:else}
-			<div class="flex justify-center p-4">
+			<div class="mt-8 flex justify-center p-4">
 				<div class="flex w-56 flex-col gap-4">
-					<h1 class="text-center text-lg font-bold">No license found.</h1>
-					<p class="text-center">Create it by clicking the button below.</p>
-					<button class="btn btn-primary" onclick={handleCreateClick}>
-						<Plus class="h-4 w-4" />
-						Create License
-					</button>
+					<h1 class="text-base-300 text-neutral flex items-center justify-center gap-2 text-center">
+						<XCircle />
+						No License Found
+					</h1>
 				</div>
 			</div>
 		{/if}

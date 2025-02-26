@@ -17,7 +17,7 @@
 			<strong>Error!</strong> Invalid email or password.
 		</div>
 	{/if}
-	<div class="card w-80 border-2 border-gray-600 shadow-2xl">
+	<div class="card border-base-300 bg-base-100 w-80 rounded-none border-2">
 		<div class="card-body">
 			<div class="mb-10 flex items-center justify-center gap-1 text-xl">
 				<ShieldHalf class="h-6 w-6" />

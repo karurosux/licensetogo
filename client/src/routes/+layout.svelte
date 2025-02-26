@@ -26,6 +26,6 @@
 	}
 </script>
 
-<div class="bg-base-100 h-screen w-screen overflow-x-auto">
+<div class="bg-base-200 h-screen w-screen overflow-x-auto">
 	{@render children()}
 </div>
