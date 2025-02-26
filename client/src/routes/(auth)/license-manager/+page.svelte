@@ -3,7 +3,6 @@
 	import { APP_NAME } from '$lib/constants';
 	import { catchPromise } from '$lib/utils/catch-promise.js';
 	import { getPagination } from '$lib/utils/pagination.js';
-	import { pb } from '$lib/utils/pb.js';
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
 	import dayjs from 'dayjs';
 	import lo from 'lodash';
@@ -34,8 +33,16 @@
 	 */
 	const handleToggleActive = (l) => async () => {
 		const res = await catchPromise(
-			pb.collection('license').update(l.id, {
-				active: !l.active
+			fetch('/license-manager', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					action: 'set-active',
+					id: l.id,
+					value: !l.active
+				})
 			})
 		);
 
@@ -123,7 +130,7 @@
 						<tr>
 							<td>{l.name}</td>
 							<td>{l.permissions?.toString() || 'N/A'}</td>
-							<td>{l.metadata?.toString() || 'N/A'}</td>
+							<td>{l.metadata ? JSON.stringify(l.metadata) : 'N/A'}</td>
 							<td>
 								<div class="px-2">
 									{#if l.active}
