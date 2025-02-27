@@ -3,6 +3,7 @@ package licensestorage
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/karurosux/keystogo/pkg/keystogo"
 	"github.com/karurosux/keystogo/pkg/models"
@@ -47,8 +48,8 @@ func (p *PocketbaseStorage) Create(apiKey *models.APIKey) error {
 }
 
 // Delete implements keystogo.Storage.
-func (p *PocketbaseStorage) Delete(hashedKey string) error {
-	record, err := p.app.FindFirstRecordByData(p.collectionName, "key", hashedKey)
+func (p *PocketbaseStorage) Delete(id string) error {
+	record, err := p.app.FindFirstRecordByData(p.collectionName, "id", id)
 	if err != nil {
 		return err
 	}
@@ -60,8 +61,43 @@ func (p *PocketbaseStorage) Delete(hashedKey string) error {
 	return nil
 }
 
+// GetByID
+func (p *PocketbaseStorage) GetByID(id string) (*models.APIKey, error) {
+	record, err := p.app.FindFirstRecordByData(p.collectionName, "id", id)
+	if err != nil {
+		return nil, err
+	}
+
+	expires := record.GetDateTime("expires").Time()
+	lastused := record.GetDateTime("lastused").Time()
+	apiKey := &models.APIKey{
+		ID:        record.Id,
+		Name:      record.GetString("name"),
+		CreatedAt: record.GetDateTime("created").Time(),
+		Active:    record.GetBool("active"),
+	}
+
+	if !expires.IsZero() {
+		apiKey.ExpiresAt = &expires
+	}
+
+	if !lastused.IsZero() {
+		apiKey.LastUsedAt = &lastused
+	}
+
+	if err := record.UnmarshalJSONField("permissions", &apiKey.Permissions); err != nil {
+		return nil, err
+	}
+
+	if err := record.UnmarshalJSONField("metadata", &apiKey.Metadata); err != nil {
+		return nil, err
+	}
+
+	return apiKey, nil
+}
+
 // Get implements keystogo.Storage.
-func (p *PocketbaseStorage) Get(hashedKey string) (*models.APIKey, error) {
+func (p *PocketbaseStorage) GetByHashedKey(hashedKey string) (*models.APIKey, error) {
 	record, err := p.app.FindFirstRecordByData(p.collectionName, "key", hashedKey)
 	if err != nil {
 		return nil, err
@@ -110,20 +146,58 @@ func (p *PocketbaseStorage) List(page models.Page, filter models.Filter) ([]mode
 		f = append(f, "name = {:name}")
 	}
 
-	records, err := p.app.FindRecordsByFilter(p.collectionName, strings.Join(f, " && "), "-created", page.Limit, page.Offset, params)
+	whereQuery := strings.Join(f, " && ")
+	records, err := p.app.FindRecordsByFilter(p.collectionName, whereQuery, "-created", page.Limit, page.Offset, params)
 	if err != nil {
 		return nil, 0, err
 	}
 
-	total, err := p.app.CountRecords(p.collectionName, dbx.NewExp(strings.Join(f, " && "), params))
+	exprs := []dbx.Expression{}
+
+	if filter.Active != nil {
+		exprs = append(exprs, dbx.HashExp{"active": filter.Active})
+	}
+
+	if filter.Name != nil {
+		exprs = append(exprs, dbx.NewExp("name ~ {:name}", dbx.Params{"name": *filter.Name}))
+	}
+
+	total, err := p.app.CountRecords(p.collectionName, exprs...)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	for index := range records {
-		key := models.APIKey{}
+		var expires *time.Time = nil
+		var lastUsed *time.Time = nil
+
 		curr := records[index]
-		curr.Collection().RawOptions.Scan(&key)
+		metadata := &map[string]any{}
+		permissions := &[]models.Permission{}
+
+		curr.UnmarshalJSONField("metadata", metadata)
+		curr.UnmarshalJSONField("permissions", permissions)
+
+		if !curr.GetDateTime("expires").Time().IsZero() {
+			tempExpires := curr.GetDateTime("expires").Time()
+			expires = &tempExpires
+		}
+
+		if !curr.GetDateTime("lastused").Time().IsZero() {
+			tempLastUsed := curr.GetDateTime("lastused").Time()
+			lastUsed = &tempLastUsed
+		}
+
+		key := models.APIKey{
+			ID:          curr.Id,
+			Name:        curr.GetString("name"),
+			CreatedAt:   curr.GetDateTime("created").Time(),
+			Active:      curr.GetBool("active"),
+			ExpiresAt:   expires,
+			LastUsedAt:  lastUsed,
+			Metadata:    metadata,
+			Permissions: permissions,
+		}
 		result = append(result, key)
 	}
 
@@ -136,8 +210,8 @@ func (p *PocketbaseStorage) Ping() error {
 }
 
 // Update implements keystogo.Storage.
-func (p *PocketbaseStorage) Update(hashKey string, update models.ApiKeyUpdate) error {
-	record, err := p.app.FindFirstRecordByData(p.collectionName, "key", hashKey)
+func (p *PocketbaseStorage) Update(id string, update models.ApiKeyUpdate) error {
+	record, err := p.app.FindFirstRecordByData(p.collectionName, "id", id)
 	if err != nil {
 		return err
 	}
