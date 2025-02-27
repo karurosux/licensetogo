@@ -5,3 +5,11 @@ export function newPocketBase() {
 }
 
 export const pb = newPocketBase();
+
+/**
+ * @param {any} locals
+ * @return {pb}
+ */
+export const getPBFromLocals = (locals) => {
+	return locals.pb;
+};

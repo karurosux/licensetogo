@@ -1,18 +1,28 @@
 <script>
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { APP_NAME } from '$lib/constants';
-	import { catchPromise } from '$lib/utils/catch-promise.js';
 	import { getPagination } from '$lib/utils/pagination.js';
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
 	import dayjs from 'dayjs';
 	import lo from 'lodash';
-	import { Check, EllipsisVertical, KeyRound, Plus, Search, X, XCircle } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import {
+		Check,
+		EllipsisVertical,
+		KeyRound,
+		Plus,
+		Search,
+		Trash,
+		X,
+		XCircle
+	} from 'lucide-svelte';
 
 	let { data } = $props();
 	let filter = $state(data.query?.filter || '');
 	let error = $state('');
-	let showCreateNew = $state(false);
+	let deleteApiKey = $state(null);
+	let setActiveApiKey = $state(null);
+	let deleting = $state(false);
 	let pagination = $derived(
 		data.license?.then((lic) => getPagination(lic.totalItems, lic.perPage, lic.page - 1))
 	);
@@ -20,6 +30,10 @@
 	const handleFilterChange = lo.debounce(() => {
 		replaceStateWithQuery({ filter, offset: 0 });
 	}, 300);
+
+	const handleDeleteClick = (l) => () => {
+		deleteApiKey = l;
+	};
 
 	/**
 	 * @param {number} page
@@ -31,36 +45,13 @@
 	/**
 	 * @param {any} l
 	 */
-	const handleToggleActive = (l) => async () => {
-		const res = await catchPromise(
-			fetch('/apikeys', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					action: 'set-active',
-					id: l.id,
-					value: !l.active
-				})
-			})
-		);
-
-		if (res.ok) {
-			l.active = !l.active;
-			location.reload();
-		} else {
-			error = 'Failed to toggle active status.';
-		}
+	const handleToggleActive = (l) => () => {
+		setActiveApiKey = l;
 	};
 
 	const handleCreateClick = () => {
 		goto('/apikeys/create');
 	};
-
-	onMount(() => {
-		data.license.then((lic) => (showCreateNew = lic.totalItems === 0));
-	});
 </script>
 
 <svelte:head>
@@ -151,6 +142,7 @@
 										{:else}
 											<li><button onclick={handleToggleActive(l)}><Check /> Enable</button></li>
 										{/if}
+										<li><button onclick={handleDeleteClick(l)}><Trash /> Delete</button></li>
 									</ul>
 								</div>
 							</td>
@@ -193,3 +185,64 @@
 		{/if}
 	{/await}
 </div>
+<dialog id="deleteDialog" class="modal" open={!!deleteApiKey}>
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Delete API Key</h3>
+		<p class="py-4">Are you sure you want to delete <b>"{deleteApiKey?.name}"</b> API Key?</p>
+		<div class="modal-action">
+			<form
+				method="POST"
+				action="?/delete"
+				use:enhance={() => {
+					deleting = true;
+					return async ({ update }) => {
+						deleting = false;
+						deleteApiKey = null;
+						return update();
+					};
+				}}
+			>
+				<input type="hidden" name="id" value={deleteApiKey?.id} />
+				<button type="button" class="btn" onclick={() => (deleteApiKey = null)}>Close</button>
+				<button type="submit" class="btn btn-primary">
+					{#if deleting}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					Delete
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>
+
+<dialog id="deleteDialog" class="modal" open={!!setActiveApiKey}>
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">{setActiveApiKey?.active ? 'Disable' : 'Enable'} API Key</h3>
+		<p class="py-4">
+			Are you sure you want to {setActiveApiKey?.active ? 'disable' : 'enable'}
+			<b>"{setActiveApiKey?.name}"</b> API Key?
+		</p>
+		<div class="modal-action">
+			<form
+				method="POST"
+				action="?/setActive"
+				use:enhance={() => {
+					return async ({ update }) => {
+						setActiveApiKey = null;
+						return update();
+					};
+				}}
+			>
+				<input type="hidden" name="id" value={setActiveApiKey?.id} />
+				<input type="hidden" name="value" value={!setActiveApiKey?.active} />
+				<button type="button" class="btn" onclick={() => (setActiveApiKey = null)}>Close</button>
+				<button type="submit" class="btn btn-primary">
+					{#if deleting}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					{setActiveApiKey?.active ? 'Disable' : 'Enable'}
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>
