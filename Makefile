@@ -30,5 +30,12 @@ migrations-sync:
 migrate:
 	go run main.go migrate collections --dir $$HOME/$$PNAME/pb_data/
 
+create-migration:
+	@if [ "$(name)" = "" ]; then \
+		echo "Error: Migration name is required. Usage: make create-migration name=your_migration_name"; \
+		exit 1; \
+	fi
+	go run main.go migrate create --dir $$HOME/$$PNAME/pb_data/ "$(name)"
+
 configure:
 	docker compose up -d

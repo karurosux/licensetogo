@@ -36,17 +36,17 @@
 	};
 
 	/**
-	 * @param {number} page
-	 */
-	const handlePageChange = (page) => () => {
-		replaceStateWithQuery({ filter, offset: page - 1 });
-	};
-
-	/**
 	 * @param {any} l
 	 */
 	const handleToggleActive = (l) => () => {
 		setActiveApiKey = l;
+	};
+
+	/**
+	 * @param {number} page
+	 */
+	const handlePageChange = (page) => () => {
+		replaceStateWithQuery({ filter, offset: page - 1 });
 	};
 
 	const handleCreateClick = () => {

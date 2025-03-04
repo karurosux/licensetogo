@@ -45,6 +45,8 @@ func (lts *LicenseToGoServer) Start() error {
 
 	middleware.SetManager(lts.apiKeyManager)
 
+	lts.overrideUI()
+
 	// Register license handlers
 	lts.app.OnServe().BindFunc(func(e *core.ServeEvent) error {
 		// licenses could be requested via endpoint, for that we have the option to generate an api key.
@@ -66,10 +68,30 @@ func (lts *LicenseToGoServer) Start() error {
 	return lts.app.Start()
 }
 
+func (lts *LicenseToGoServer) isDev() bool {
+	return strings.Contains(strings.Join(os.Args, " "), "--dev")
+}
+
 func (lts *LicenseToGoServer) setupMigrations() error {
-	isGoRun := strings.Contains(strings.Join(os.Args, " "), "--dev")
+	isGoRun := lts.isDev()
 	return migratecmd.Register(lts.app.App, lts.app.RootCmd, migratecmd.Config{
 		Dir:         "./migrations/",
 		Automigrate: isGoRun,
+	})
+}
+
+func (lts *LicenseToGoServer) overrideUI() {
+	if lts.isDev() {
+		return
+	}
+
+	lts.app.OnServe().BindFunc(func(e *core.ServeEvent) error {
+		e.Router.BindFunc(func(r *core.RequestEvent) error {
+			if strings.HasPrefix(r.Request.URL.Path, "/_/") {
+				return r.BadRequestError("", nil)
+			}
+			return r.Next()
+		})
+		return e.Next()
 	})
 }

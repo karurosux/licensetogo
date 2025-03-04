@@ -1,4 +1,5 @@
 <script>
+	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { APP_NAME } from '$lib/constants';
 	import { catchPromise } from '$lib/utils/catch-promise.js';
@@ -6,13 +7,16 @@
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
 	import dayjs from 'dayjs';
 	import lo from 'lodash';
-	import { Check, EllipsisVertical, Plus, Search, X, XCircle, Scroll } from 'lucide-svelte';
+	import { Check, EllipsisVertical, Plus, Search, X, XCircle, Scroll, Trash } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
 	let filter = $state(data.query?.filter || '');
 	let error = $state('');
+	let deleting = $state(false);
 	let showCreateNew = $state(false);
+	let deleteLicense = $state(null);
+	let setActiveLicense = $state(null);
 	let pagination = $derived(
 		data.license?.then((lic) => getPagination(lic.totalItems, lic.perPage, lic.page - 1))
 	);
@@ -28,34 +32,19 @@
 		replaceStateWithQuery({ filter, offset: page - 1 });
 	};
 
+	const handleCreateClick = () => {
+		goto('/license-manager/create');
+	};
+
+	const handleDeleteClick = (l) => () => {
+		deleteLicense = l;
+	};
+
 	/**
 	 * @param {any} l
 	 */
-	const handleToggleActive = (l) => async () => {
-		const res = await catchPromise(
-			fetch('/license-manager', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					action: 'set-active',
-					id: l.id,
-					value: !l.active
-				})
-			})
-		);
-
-		if (res.ok) {
-			l.active = !l.active;
-			location.reload();
-		} else {
-			error = 'Failed to toggle active status.';
-		}
-	};
-
-	const handleCreateClick = () => {
-		goto('/license-manager/create');
+	const handleToggleActive = (l) => () => {
+		setActiveLicense = l;
 	};
 
 	onMount(() => {
@@ -157,6 +146,7 @@
 										{:else}
 											<li><button onclick={handleToggleActive(l)}><Check /> Enable</button></li>
 										{/if}
+										<li><button onclick={handleDeleteClick(l)}><Trash /> Delete</button></li>
 									</ul>
 								</div>
 							</td>
@@ -199,3 +189,65 @@
 		{/if}
 	{/await}
 </div>
+
+<dialog id="deleteDialog" class="modal" open={!!deleteLicense}>
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Delete License</h3>
+		<p class="py-4">Are you sure you want to delete <b>"{deleteLicense?.name}"</b> License?</p>
+		<div class="modal-action">
+			<form
+				method="POST"
+				action="?/delete"
+				use:enhance={() => {
+					deleting = true;
+					return async ({ update }) => {
+						deleting = false;
+						deleteLicense = null;
+						return update();
+					};
+				}}
+			>
+				<input type="hidden" name="id" value={deleteLicense?.id} />
+				<button type="button" class="btn" onclick={() => (deleteLicense = null)}>Close</button>
+				<button type="submit" class="btn btn-primary">
+					{#if deleting}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					Delete
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>
+
+<dialog id="setActiveDialog" class="modal" open={!!setActiveLicense}>
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">{setActiveLicense?.active ? 'Disable' : 'Enable'} License</h3>
+		<p class="py-4">
+			Are you sure you want to {setActiveLicense?.active ? 'disable' : 'enable'}
+			<b>"{setActiveLicense?.name}"</b> License?
+		</p>
+		<div class="modal-action">
+			<form
+				method="POST"
+				action="?/setActive"
+				use:enhance={() => {
+					return async ({ update }) => {
+						setActiveLicense = null;
+						return update();
+					};
+				}}
+			>
+				<input type="hidden" name="id" value={setActiveLicense?.id} />
+				<input type="hidden" name="value" value={!setActiveLicense?.active} />
+				<button type="button" class="btn" onclick={() => (setActiveLicense = null)}>Close</button>
+				<button type="submit" class="btn btn-primary">
+					{#if deleting}
+						<span class="loading loading-spinner loading-xs"></span>
+					{/if}
+					{setActiveLicense?.active ? 'Disable' : 'Enable'}
+				</button>
+			</form>
+		</div>
+	</div>
+</dialog>

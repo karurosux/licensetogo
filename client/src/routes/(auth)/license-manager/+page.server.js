@@ -1,3 +1,5 @@
+import { getPBFromLocals } from '$lib/utils/pb';
+
 /**
  * @type {import("./$types").PageServerLoad}
  */
@@ -29,4 +31,24 @@ export const load = async ({ url, locals }) => {
 			limit
 		}
 	};
+};
+
+export const actions = {
+	setActive: async ({ request, locals }) => {
+		const body = await request.formData();
+		const pb = getPBFromLocals(locals);
+		await pb.collection('license').update(body.get('id'), { active: body.get('value') });
+		return {
+			success: true
+		};
+	},
+	delete: async ({ request, locals }) => {
+		const body = await request.formData();
+		const pb = getPBFromLocals(locals);
+		await pb.collection('license').delete(body.get('id'));
+
+		return {
+			success: true
+		};
+	}
 };
