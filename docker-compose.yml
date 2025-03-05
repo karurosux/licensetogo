@@ -8,7 +8,7 @@ services:
       target: api
     container_name: licensetogo-api
     volumes:
-      - /licensetogo/pb_data:/app/pb_data
+      - ${HOME}/ltg/pb_data:/app/pb_data
     ports:
       - "8090:8090"
     networks:
