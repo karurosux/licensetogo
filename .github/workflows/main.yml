@@ -1,0 +1,45 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
+      # Build and push the first image (from the first stage)
+      - name: Build and push licensetogo api
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          target: api  # The api stage from your Dockerfile
+          tags: karurosuxx/licensetogo-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          
+      # Build and push the second image (from the second stage)
+      - name: Build and push licensetogo web
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          target: web  # The web stage from your Dockerfile
+          tags: karurosuxx/licensetogo-web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
