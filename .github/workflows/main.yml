@@ -1,7 +1,7 @@
 name: Build and Push Docker Images
 on:
   push:
-    branches: [ main ]
+    branches-ignore: [ '**' ]
     tags: [ 'v*' ]  # Trigger on version tags
   workflow_dispatch:
     inputs:
