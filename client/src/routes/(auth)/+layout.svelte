@@ -1,7 +1,7 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { pb } from '$lib/utils/pb';
-	import { KeyRound, LogOut, Scroll, ShieldHalf } from 'lucide-svelte';
+	import { Cog, KeyRound, LogOut, Scroll, ShieldHalf, User } from 'lucide-svelte';
 
 	let { children } = $props();
 
@@ -56,6 +56,21 @@
 					<KeyRound />
 					API Keys
 				</a>
+			</li>
+			<li>
+				<a href="/settings/credentials">
+					<Cog />
+					Settings
+				</a>
+				<ul class="menu menu-lg bg-base-100 text-base-content w-56 p-4">
+					<!-- Sidebar content here -->
+					<li>
+						<a href="/settings/credentials">
+							<User />
+							Credentials
+						</a>
+					</li>
+				</ul>
 			</li>
 		</ul>
 	</div>

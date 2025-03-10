@@ -14,6 +14,7 @@ func init() {
 		settings.Logs.LogAuthId = true
 		settings.Logs.LogIP = false
 		settings.RateLimits.Enabled = true
+		settings.SMTP.Enabled = false
 
 		return app.Save(settings)
 	}, func(app core.App) error {

@@ -1,6 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import Breadcrumbs from '$lib/components/breadcrumbs/Breadcrumbs.svelte';
 	import { APP_NAME } from '$lib/constants';
 	import { getPagination } from '$lib/utils/pagination.js';
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
@@ -58,16 +59,7 @@
 	<title>API Keys | {APP_NAME}</title>
 </svelte:head>
 
-<div class="breadcrumbs bg-base-200 w-full p-6 text-sm">
-	<ul>
-		<li>
-			<a>
-				<KeyRound />
-				API Keys Manager
-			</a>
-		</li>
-	</ul>
-</div>
+<Breadcrumbs items={[{ label: 'API Keys Manager', icon: KeyRound }]}></Breadcrumbs>
 
 <div>
 	{#if error}

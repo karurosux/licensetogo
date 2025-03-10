@@ -53,12 +53,17 @@ func (lts *LicenseToGoServer) Start() error {
 		licenseHandler := handlers.NewLicenseHandler(DEFAULT_COLLECTION, lts.app)
 		// Api keys could only be created by users that signin.
 		apiKeyHandler := handlers.NewApiKeyHandlers(API_KEYS_COLLECTION, lts.app)
+		settingsHandler := handlers.NewSettingsHandlers(lts.app)
 
 		if err := licenseHandler.RegisterRoutes(e); err != nil {
 			return err
 		}
 
 		if err := apiKeyHandler.RegisterRoutes(e); err != nil {
+			return err
+		}
+
+		if err := settingsHandler.RegisterRoutes(e); err != nil {
 			return err
 		}
 

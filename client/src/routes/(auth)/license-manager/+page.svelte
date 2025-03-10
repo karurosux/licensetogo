@@ -1,13 +1,13 @@
 <script>
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import Breadcrumbs from '$lib/components/breadcrumbs/Breadcrumbs.svelte';
 	import { APP_NAME } from '$lib/constants';
-	import { catchPromise } from '$lib/utils/catch-promise.js';
 	import { getPagination } from '$lib/utils/pagination.js';
 	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
 	import dayjs from 'dayjs';
 	import lo from 'lodash';
-	import { Check, EllipsisVertical, Plus, Search, X, XCircle, Scroll, Trash } from 'lucide-svelte';
+	import { Check, EllipsisVertical, Plus, Scroll, Search, Trash, X, XCircle } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	let { data } = $props();
@@ -15,7 +15,13 @@
 	let error = $state('');
 	let deleting = $state(false);
 	let showCreateNew = $state(false);
+	/**
+	 * @type any
+	 **/
 	let deleteLicense = $state(null);
+	/**
+	 * @type any
+	 **/
 	let setActiveLicense = $state(null);
 	let pagination = $derived(
 		data.license?.then((lic) => getPagination(lic.totalItems, lic.perPage, lic.page - 1))
@@ -36,6 +42,9 @@
 		goto('/license-manager/create');
 	};
 
+	/**
+	 * @param {any} l
+	 */
 	const handleDeleteClick = (l) => () => {
 		deleteLicense = l;
 	};
@@ -56,16 +65,7 @@
 	<title>License Manager | {APP_NAME}</title>
 </svelte:head>
 
-<div class="breadcrumbs bg-base-200 w-full p-6 text-sm">
-	<ul>
-		<li>
-			<a>
-				<Scroll />
-				License Manager
-			</a>
-		</li>
-	</ul>
-</div>
+<Breadcrumbs items={[{ label: 'License Manager', icon: Scroll }]}></Breadcrumbs>
 
 <div>
 	{#if error}
@@ -180,7 +180,7 @@
 		{:else}
 			<div class="mt-8 flex justify-center p-4">
 				<div class="flex w-56 flex-col gap-4">
-					<h1 class="text-base-300 text-neutral flex items-center justify-center gap-2 text-center">
+					<h1 class="text-neutral flex items-center justify-center gap-2 text-center">
 						<XCircle />
 						No License Found
 					</h1>

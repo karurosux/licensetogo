@@ -1,5 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
+	import Breadcrumbs from '$lib/components/breadcrumbs/Breadcrumbs.svelte';
 	import { APP_NAME } from '$lib/constants';
 	import { Eye, Plus, Scroll } from 'lucide-svelte';
 
@@ -10,28 +11,13 @@
 	<title>License Generated | {APP_NAME}</title>
 </svelte:head>
 
-<div class="breadcrumbs bg-base-200 border-b-base-300 w-full border-b p-6 text-sm">
-	<ul>
-		<li>
-			<a>
-				<Scroll />
-				License Manager
-			</a>
-		</li>
-		<li>
-			<a>
-				<Plus />
-				Create License
-			</a>
-		</li>
-		<li>
-			<a>
-				<Eye />
-				License Viewer
-			</a>
-		</li>
-	</ul>
-</div>
+<Breadcrumbs
+	items={[
+		{ label: 'License Manager', icon: Scroll },
+		{ label: 'Create License', icon: Plus },
+		{ label: 'License Created', icon: Eye }
+	]}
+></Breadcrumbs>
 
 <div class="flex w-full items-center justify-center">
 	<div class="flex flex-col items-center justify-center gap-4 p-4">
