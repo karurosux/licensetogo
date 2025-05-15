@@ -21,7 +21,8 @@ export default {
 			next: 'Next',
 			open: 'Open',
 			goBack: 'Go Back',
-			edit: 'Edit'
+			edit: 'Edit',
+			expires: 'Expires'
 		},
 		errorPage: {
 			notFound: {
@@ -49,17 +50,12 @@ export default {
 			openUserMenu: 'Open user menu',
 			signOut: 'Sign Out'
 		},
-		subjects: {
-			createSubject: 'Create Subject',
-			filterPlaceholder: 'Search by Subject Name',
-			createSubjectDescription: "Fill required fields then click save when you're done.",
-			createError: 'There was an error creating the subject.'
-		},
-		subjectProfile: {
-			registeredOnBranchAtDate: 'Registered at {{branch}} on {{date}}',
-			qrCards: 'QR Cards',
-			subjectInformation: 'Subject Information',
-			subjectGeneralInformation: 'Subject General Information'
+		licenseManager: {
+			createLicense: {
+				title: 'Create License',
+				description: 'Create a license for your application.',
+				createError: 'Soemthing wrong happened, please try again.'
+			}
 		}
 	}
 };

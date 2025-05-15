@@ -23,19 +23,21 @@
 	<Dialog.Trigger>
 		<Button variant="outline">
 			<Plus />
-			{$t('subjects.createSubject')}
+			{$t((ts) => ts.licenseManager.createLicense.title)}
 		</Button>
 	</Dialog.Trigger>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>{$t('subjects.createSubject')}</Dialog.Title>
+			<Dialog.Title>{$t((ts) => ts.licenseManager.createLicense.title)}</Dialog.Title>
 			<Dialog.Description>
-				{$t('subjects.createSubjectDescription')}
+				{$t((ts) => ts.licenseManager.createLicense.description)}
 			</Dialog.Description>
 		</Dialog.Header>
 		{#if failed}
 			<Alert.Root variant="destructive">
-				<Alert.Description>{$t('subjects.createError')}</Alert.Description>
+				<Alert.Description
+					>{$t((ts) => ts.licenseManager.createLicense.createError)}</Alert.Description
+				>
 			</Alert.Root>
 		{/if}
 		<form
@@ -56,28 +58,20 @@
 				};
 			}}
 		>
-			<div class="col-span-1">
-				<Label for="firstName">{$t('general.firstName')}</Label>
-				<Input.Input type="text" name="firstName" id="lastName" required maxlength={120} />
-			</div>
-			<div class="col-span-1">
-				<Label for="lastName">{$t('general.lastName')}</Label>
-				<Input.Input type="text" name="lastName" id="lastName" required maxlength={120} />
+			<div class="col-span-2">
+				<Label for="name">{$t((ts) => ts.general.name)}</Label>
+				<Input.Input type="text" name="name" id="name" required maxlength={120} />
 			</div>
 
-			<div class="col-span-1">
-				<Label for="nickname">{$t('general.nickName')}</Label>
-				<Input.Input type="text" name="nickname" id="nickname" maxlength={120} />
+			<div class="col-span-2">
+				<Label for="expires">{$t((ts) => ts.general.expires)}</Label>
+				<Input.Input type="text" name="expires" id="expires" maxlength={120} />
 			</div>
 
-			<div class="col-span-1">
-				<Label for="birthdate">{$t('general.birthdate')}</Label>
-				<Input.Input type="date" name="birthdate" id="birthdate" required max={maxDate} />
-			</div>
 			<Dialog.Footer class="col-span-2">
 				<Button type="submit" disabled={loading}>
 					<Save />
-					{$t('subjects.createSubject')}
+					{$t((ts) => ts.licenseManager.createLicense.title)}
 				</Button>
 			</Dialog.Footer>
 		</form>
