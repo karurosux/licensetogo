@@ -27,6 +27,8 @@ services:
       - "80:3000"
     networks:
       - licensetogo-network
+    depends_on:
+      - licensetogo-api
 
 networks:
   licensetogo-network:

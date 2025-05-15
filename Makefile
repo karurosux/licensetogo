@@ -22,7 +22,7 @@ install:
 	&& docker-compose up -d
 
 gen-types:
-	npx pocketbase-typegen@1.2.1 --db $$HOME/$$PNAME/pb_data/data.db --out ./client/src/lib/models/generated/pb-models.ts
+	npx pocketbase-typegen --db $$HOME/$$PNAME/data.db --out ./client/src/lib/models/generated/pb-models.ts
 
 migrations-sync:
 	go run main.go migrate history-sync --dir $$HOME/$$PNAME/pb_data/
