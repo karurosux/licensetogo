@@ -1,51 +1,52 @@
 <script>
-	import Pagination from '$lib/components/Pagination.svelte';
-	import Badge from '$lib/components/ui/badge/badge.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as Card from '$lib/components/ui/card';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import * as Table from '$lib/components/ui/table';
-	import { APP_NAME } from '$lib/constants';
-	import CreateLicense from '$lib/containers/subjects/CreateLicense.svelte';
-	import { breadcrumbs } from '$lib/context/breadcrumbs.js';
-	import { Trash } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import Pagination from '$lib/components/Pagination.svelte'
+	import Badge from '$lib/components/ui/badge/badge.svelte'
+	import Button from '$lib/components/ui/button/button.svelte'
+	import * as Card from '$lib/components/ui/card'
+	import Input from '$lib/components/ui/input/input.svelte'
+	import * as Table from '$lib/components/ui/table'
+	import { APP_NAME } from '$lib/constants'
+	import CreateLicense from '$lib/containers/subjects/CreateLicense.svelte'
+	import DeleteLicense from '$lib/containers/subjects/DeleteLicense.svelte'
+	import { breadcrumbs } from '$lib/context/breadcrumbs.js'
+	import { t } from '$lib/i18n/i18n.js'
+	import { Trash } from 'lucide-svelte'
+	import { onMount } from 'svelte'
 
-	let { data } = $props();
+	let { data } = $props()
 
 	onMount(() => {
-		breadcrumbs.set([{ href: '/', label: 'Home' }, { label: 'Licenses' }]);
-	});
+		breadcrumbs.set([{ href: '/', label: 'Home' }, { label: 'Licenses' }])
+	})
 </script>
 
 <svelte:head>
-	<title>License Manager | {APP_NAME}</title>
+	<title>{$t((ts) => ts.licenseManager.createLicense.title)} | {APP_NAME}</title>
 </svelte:head>
 
 <div class="flex gap-4">
-	<Input placeholder="Search..." class="flex-1" />
+	<Input placeholder={$t((ts) => ts.general.search)} class="flex-1" />
 	<CreateLicense />
 </div>
 
-<Card.Root
-	data-x-chunk-name="dashboard-05-chunk-3"
-	data-x-chunk-description="A table of recent orders showing the following columns: Customer, Type, Status, Date, and Amount."
->
+<Card.Root>
 	<Card.Header class="px-7">
-		<Card.Title>Licenses</Card.Title>
-		<Card.Description>All registered licenses in your application.</Card.Description>
+		<Card.Title>{$t((ts) => ts.general.licenses)}</Card.Title>
+		<Card.Description>{$t((ts) => ts.licenseManager.descriptions)}</Card.Description>
 	</Card.Header>
 	<Card.Content>
 		{#if (data?.licenses?.totalItems || 0) > 0}
 			<Table.Root>
 				<Table.Header>
 					<Table.Row>
-						<Table.Head>Name</Table.Head>
-						<Table.Head class="hidden sm:table-cell">Metadata</Table.Head>
-						<Table.Head class="hidden sm:table-cell">Permissions</Table.Head>
-						<Table.Head class="hidden md:table-cell">Active</Table.Head>
-						<Table.Head>Expires</Table.Head>
-						<Table.Head>Created</Table.Head>
+						<Table.Head>{$t((ts) => ts.general.name)}</Table.Head>
+						<Table.Head class="hidden sm:table-cell">{$t((ts) => ts.general.metadata)}</Table.Head>
+						<Table.Head class="hidden sm:table-cell">
+							{$t((ts) => ts.general.permissions)}
+						</Table.Head>
+						<Table.Head class="hidden md:table-cell">{$t((ts) => ts.general.active)}</Table.Head>
+						<Table.Head>{$t((ts) => ts.general.expires)}</Table.Head>
+						<Table.Head>{$t((ts) => ts.general.createdAt)}</Table.Head>
 						<Table.Head></Table.Head>
 					</Table.Row>
 				</Table.Header>
@@ -68,35 +69,29 @@
 									{l.active ? 'Active' : 'Inactive'}
 								</Badge>
 							</Table.Cell>
-							<Table.Cell
-								>{l.expires
-									? new Date(l.expires).toLocaleDateString(undefined, {
-											dateStyle: 'medium'
-										})
-									: '---'}</Table.Cell
-							>
-							<Table.Cell
-								>{l.created
-									? new Date(l.created).toLocaleDateString(undefined, {
-											dateStyle: 'medium'
-										})
-									: '---'}</Table.Cell
-							>
 							<Table.Cell>
-								<Button
-									variant="outline"
-									class="btn btn-sm btn-square btn-ghost"
-									on:click={() => {}}
-								>
-									<Trash class="h-4 w-4" />
-								</Button>
+								{l.expires
+									? new Date(l.expires).toLocaleDateString(undefined, {
+											dateStyle: 'medium',
+										})
+									: '---'}
+							</Table.Cell>
+							<Table.Cell>
+								{l.created
+									? new Date(l.created).toLocaleDateString(undefined, {
+											dateStyle: 'medium',
+										})
+									: '---'}
+							</Table.Cell>
+							<Table.Cell>
+								<DeleteLicense id={l.id} name={l.name} />
 							</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>
 			</Table.Root>
 		{:else}
-			<span class="p-2">No content</span>
+			<span class="p-2">{$t((ts) => ts.general.noContent)}</span>
 		{/if}
 	</Card.Content>
 	<Card.Footer>

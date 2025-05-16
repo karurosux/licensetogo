@@ -22,40 +22,54 @@ export default {
 			open: 'Open',
 			goBack: 'Go Back',
 			edit: 'Edit',
-			expires: 'Expires'
+			expires: 'Expires',
+			licenses: 'Licenses',
+			search: 'Search',
+			metadata: 'Metadata',
+			permissions: 'Permissions',
+			active: 'Active',
+			noContent: 'No Content',
+			delete: 'Delete',
+			cancel: 'Cancel',
 		},
 		errorPage: {
 			notFound: {
 				title: 'Page not found',
-				description: 'Sorry, we couldn’t find the page you’re looking for.'
+				description: 'Sorry, we couldn’t find the page you’re looking for.',
 			},
 			forbidden: {
 				title: 'Forbidden',
-				description: 'You should not be here... please go back home.'
+				description: 'You should not be here... please go back home.',
 			},
-			goBack: 'Go back home'
+			goBack: 'Go back home',
 		},
 		login: {
 			header: 'Sign in into yout account',
 			forgotPassword: 'Forgot Password?',
 			signIn: 'Sign In',
-			loginFailed: 'Login failed, please try again.'
+			loginFailed: 'Login failed, please try again.',
 		},
 		langs: {
 			en: 'English',
 			es: 'Español',
-			th: 'Thai'
+			th: 'Thai',
 		},
 		userMenu: {
 			openUserMenu: 'Open user menu',
-			signOut: 'Sign Out'
+			signOut: 'Sign Out',
 		},
 		licenseManager: {
+			title: 'License Manager',
+			descriptions: 'All registered licenses in your application.',
 			createLicense: {
 				title: 'Create License',
 				description: 'Create a license for your application.',
-				createError: 'Soemthing wrong happened, please try again.'
-			}
-		}
-	}
-};
+				createError: 'Something wrong happened while creating the license, please try again.',
+			},
+			deleteLicense: {
+				title: 'Delete License',
+				message: 'Are you sure you want to delete the license "{{name}}"?',
+			},
+		},
+	},
+}
