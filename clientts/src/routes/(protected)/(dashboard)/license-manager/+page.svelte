@@ -1,4 +1,5 @@
 <script>
+	import { applyAction, enhance } from '$app/forms'
 	import Pagination from '$lib/components/Pagination.svelte'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
 	import Button from '$lib/components/ui/button/button.svelte'
@@ -10,6 +11,7 @@
 	import DeleteLicense from '$lib/containers/subjects/DeleteLicense.svelte'
 	import { breadcrumbs } from '$lib/context/breadcrumbs.js'
 	import { t } from '$lib/i18n/i18n.js'
+	import { ToggleLeft, ToggleRight } from '@lucide/svelte'
 	import { Trash } from 'lucide-svelte'
 	import { onMount } from 'svelte'
 
@@ -83,7 +85,28 @@
 										})
 									: '---'}
 							</Table.Cell>
-							<Table.Cell>
+							<Table.Cell class="flex items-center justify-center gap-2">
+								<span class="toggle-active">
+									<form
+										method="POST"
+										action="?/active"
+										use:enhance={() => {
+											return async ({ result, update }) => {
+												applyAction(result)
+												return update()
+											}
+										}}>
+										<input type="hidden" name="id" value={l.id} />
+										<input type="hidden" name="value" value={!l.active} />
+										<Button type="submit" variant="outline" class="btn btn-sm btn-square btn-ghost">
+											{#if l.active}
+												<ToggleRight class="h-4 w-4 text-green-600" />
+											{:else}
+												<ToggleLeft class="h-4 w-4" />
+											{/if}
+										</Button>
+									</form>
+								</span>
 								<DeleteLicense id={l.id} name={l.name} />
 							</Table.Cell>
 						</Table.Row>

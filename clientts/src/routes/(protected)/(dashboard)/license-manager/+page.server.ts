@@ -72,4 +72,27 @@ export const actions = {
 			error: res.error?.message,
 		}
 	},
+	active: async ({ request, locals }) => {
+		const body = await request.formData()
+		const id = body.get('id')
+		const value = body.get('value')
+
+		if (!id) {
+			return {
+				failed: true,
+				error: 'missing_required_fields',
+			}
+		}
+
+		const res = await catchPromise(
+			locals.pb.collection(Collections.License).update(id as string, {
+				active: value,
+			}),
+		)
+
+		return {
+			failed: !res.ok,
+			error: res?.error?.message,
+		}
+	},
 }

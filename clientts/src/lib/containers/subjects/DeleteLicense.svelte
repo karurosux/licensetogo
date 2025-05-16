@@ -25,7 +25,7 @@
 	<Dialog.Trigger>
 		<Button
 			variant="outline"
-			class="btn btn-sm btn-square btn-ghost"
+			class="btn btn-sm btn-square btn-ghost border-red-500 text-red-500"
 			onclick={() => {
 				open = true
 			}}>
