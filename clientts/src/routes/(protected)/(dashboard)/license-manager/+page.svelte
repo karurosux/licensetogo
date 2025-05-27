@@ -7,8 +7,8 @@
 	import Input from '$lib/components/ui/input/input.svelte'
 	import * as Table from '$lib/components/ui/table'
 	import { APP_NAME } from '$lib/constants'
-	import CreateLicense from '$lib/containers/subjects/CreateLicense.svelte'
-	import DeleteLicense from '$lib/containers/subjects/DeleteLicense.svelte'
+	import CreateLicense from '$lib/containers/licenses/CreateLicense.svelte'
+	import DeleteLicense from '$lib/containers/licenses/DeleteLicense.svelte'
 	import { breadcrumbs } from '$lib/context/breadcrumbs.js'
 	import { t } from '$lib/i18n/i18n.js'
 	import { getQueryParams, mergeStateWithQuery } from '$lib/utils/query-params'
@@ -32,7 +32,7 @@
 </script>
 
 <svelte:head>
-	<title>{$t((ts) => ts.licenseManager.createLicense.title)} | {APP_NAME}</title>
+	<title>{$t((ts) => ts.licenseManager.title)} | {APP_NAME}</title>
 </svelte:head>
 
 <div class="flex gap-4">

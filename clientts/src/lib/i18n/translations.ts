@@ -31,6 +31,9 @@ export default {
 			noContent: 'No Content',
 			delete: 'Delete',
 			cancel: 'Cancel',
+			apiKeys: 'API Keys',
+			home: 'Home',
+			settings: 'Settings',
 		},
 		errorPage: {
 			notFound: {
@@ -69,6 +72,20 @@ export default {
 			deleteLicense: {
 				title: 'Delete License',
 				message: 'Are you sure you want to delete the license "{{name}}"?',
+			},
+		},
+		apiKeyManager: {
+			title: 'API Keys Manager',
+			descriptions:
+				'Authentication tokens for secure programmatic access to endpoints, each associated with specific scopes and usage limitations.',
+			createAPIKey: {
+				title: 'Create API Key',
+				description: 'Create an API Key.',
+				createError: 'Something wrong happened while creating the API Key, please try again.',
+			},
+			deleteAPIKey: {
+				title: 'Delete API Key',
+				message: 'Are you sure you want to delete the API Key "{{name}}"?',
 			},
 		},
 	},
