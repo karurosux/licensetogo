@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { applyAction, enhance } from '$app/forms'
 	import Pagination from '$lib/components/Pagination.svelte'
 	import Badge from '$lib/components/ui/badge/badge.svelte'
@@ -11,13 +11,22 @@
 	import DeleteLicense from '$lib/containers/subjects/DeleteLicense.svelte'
 	import { breadcrumbs } from '$lib/context/breadcrumbs.js'
 	import { t } from '$lib/i18n/i18n.js'
+	import { getQueryParams, mergeStateWithQuery } from '$lib/utils/query-params'
 	import { ToggleLeft, ToggleRight } from '@lucide/svelte'
-	import { Trash } from 'lucide-svelte'
+	import debounce from 'lodash/debounce'
 	import { onMount } from 'svelte'
+	import type { FormEventHandler } from 'svelte/elements'
 
 	let { data } = $props()
+	let filter = $state('')
+
+	const handleFilterChange: FormEventHandler<HTMLInputElement> = debounce(() => {
+		mergeStateWithQuery({ filter })
+	}, 300)
 
 	onMount(() => {
+		const queryParams = getQueryParams()
+		filter = queryParams.filter
 		breadcrumbs.set([{ href: '/', label: 'Home' }, { label: 'Licenses' }])
 	})
 </script>
@@ -27,7 +36,12 @@
 </svelte:head>
 
 <div class="flex gap-4">
-	<Input placeholder={$t((ts) => ts.general.search)} class="flex-1" />
+	<Input
+		placeholder={$t((ts) => ts.general.search)}
+		class="flex-1"
+		bind:value={filter}
+		autofocus={!!filter}
+		oninput={handleFilterChange} />
 	<CreateLicense />
 </div>
 

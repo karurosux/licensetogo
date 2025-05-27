@@ -1,64 +1,63 @@
 <script>
-	import { enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
-	import Breadcrumbs from '$lib/components/breadcrumbs/Breadcrumbs.svelte';
-	import { APP_NAME } from '$lib/constants';
-	import { getPagination } from '$lib/utils/pagination.js';
-	import { replaceStateWithQuery } from '$lib/utils/query-params.js';
-	import dayjs from 'dayjs';
-	import lo from 'lodash';
-	import { Check, EllipsisVertical, Plus, Scroll, Search, Trash, X, XCircle } from 'lucide-svelte';
-	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms'
+	import { goto } from '$app/navigation'
+	import Breadcrumbs from '$lib/components/breadcrumbs/Breadcrumbs.svelte'
+	import { APP_NAME } from '$lib/constants'
+	import { getPagination } from '$lib/utils/pagination.js'
+	import { replaceStateWithQuery } from '$lib/utils/query-params.js'
+	import dayjs from 'dayjs'
+	import { Check, EllipsisVertical, Plus, Scroll, Search, Trash, X, XCircle } from 'lucide-svelte'
+	import { onMount } from 'svelte'
 
-	let { data } = $props();
-	let filter = $state(data.query?.filter || '');
-	let error = $state('');
-	let deleting = $state(false);
-	let showCreateNew = $state(false);
+	let { data } = $props()
+	let filter = $state(data.query?.filter || '')
+	let error = $state('')
+	let deleting = $state(false)
+	let showCreateNew = $state(false)
 	/**
 	 * @type any
 	 **/
-	let deleteLicense = $state(null);
+	let deleteLicense = $state(null)
 	/**
 	 * @type any
 	 **/
-	let setActiveLicense = $state(null);
+	let setActiveLicense = $state(null)
 	let pagination = $derived(
-		data.license?.then((lic) => getPagination(lic.totalItems, lic.perPage, lic.page - 1))
-	);
+		data.license?.then((lic) => getPagination(lic.totalItems, lic.perPage, lic.page - 1)),
+	)
 
-	const handleFilterChange = lo.debounce(() => {
-		replaceStateWithQuery({ filter, offset: 0 });
-	}, 300);
+	const handleFilterChange = () => {
+		replaceStateWithQuery({ filter, offset: 0 })
+	}
 
 	/**
 	 * @param {number} page
 	 */
 	const handlePageChange = (page) => () => {
-		replaceStateWithQuery({ filter, offset: page - 1 });
-	};
+		replaceStateWithQuery({ filter, offset: page - 1 })
+	}
 
 	const handleCreateClick = () => {
-		goto('/license-manager/create');
-	};
+		goto('/license-manager/create')
+	}
 
 	/**
 	 * @param {any} l
 	 */
 	const handleDeleteClick = (l) => () => {
-		deleteLicense = l;
-	};
+		deleteLicense = l
+	}
 
 	/**
 	 * @param {any} l
 	 */
 	const handleToggleActive = (l) => () => {
-		setActiveLicense = l;
-	};
+		setActiveLicense = l
+	}
 
 	onMount(() => {
-		data.license.then((lic) => (showCreateNew = lic.totalItems === 0));
-	});
+		data.license.then((lic) => (showCreateNew = lic.totalItems === 0))
+	})
 </script>
 
 <svelte:head>
@@ -199,12 +198,12 @@
 				method="POST"
 				action="?/delete"
 				use:enhance={() => {
-					deleting = true;
+					deleting = true
 					return async ({ update }) => {
-						deleting = false;
-						deleteLicense = null;
-						return update();
-					};
+						deleting = false
+						deleteLicense = null
+						return update()
+					}
 				}}
 			>
 				<input type="hidden" name="id" value={deleteLicense?.id} />
@@ -233,9 +232,9 @@
 				action="?/setActive"
 				use:enhance={() => {
 					return async ({ update }) => {
-						setActiveLicense = null;
-						return update();
-					};
+						setActiveLicense = null
+						return update()
+					}
 				}}
 			>
 				<input type="hidden" name="id" value={setActiveLicense?.id} />
