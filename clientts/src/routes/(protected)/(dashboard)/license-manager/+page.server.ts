@@ -36,7 +36,7 @@ export const actions = {
 
 		const bodyObject = {
 			name: name as string,
-			expires: expires,
+			expires: expires || null,
 			lastused: null,
 			metadata: null,
 			permissions: null,

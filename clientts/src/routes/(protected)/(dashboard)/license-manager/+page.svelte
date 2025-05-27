@@ -112,7 +112,7 @@
 										}}>
 										<input type="hidden" name="id" value={l.id} />
 										<input type="hidden" name="value" value={!l.active} />
-										<Button type="submit" variant="outline" class="btn btn-sm btn-square btn-ghost">
+										<Button type="submit" variant="outline">
 											{#if l.active}
 												<ToggleRight class="h-4 w-4 text-green-600" />
 											{:else}
