@@ -15,11 +15,10 @@ build-local:
 	&& go build -o ./dist/main ./main.go
 
 build:
-	docker build --no-cache -t $$PNAME .
+	docker-compose up --force-recreate --build --always-recreate-deps -d
 
 install:
-	make build \
-	&& docker-compose up -d
+	docker-compose up --force-recreate --build --always-recreate-deps -d
 
 gen-types:
 	npx pocketbase-typegen --db $$HOME/$$PNAME/data.db --out ./client/src/lib/models/generated/pb-models.ts
