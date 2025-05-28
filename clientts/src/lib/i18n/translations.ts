@@ -80,7 +80,8 @@ export default {
 				'Authentication tokens for secure programmatic access to endpoints, each associated with specific scopes and usage limitations.',
 			createAPIKey: {
 				title: 'Create API Key',
-				description: 'Create an API Key.',
+				description:
+					'Generate an API Key to seamlessly integrate license key creation directly within your application via our secure endpoints.',
 				createError: 'Something wrong happened while creating the API Key, please try again.',
 			},
 			deleteAPIKey: {
