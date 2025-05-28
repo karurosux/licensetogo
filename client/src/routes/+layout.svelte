@@ -1,16 +1,17 @@
-<script>
+<script lang="ts">
 	import { browser } from '$app/environment';
-	import { setUserContext } from '$lib/context/user';
-	import { pb } from '$lib/utils/pb';
-	import { onDestroy } from 'svelte';
-	import { writable } from 'svelte/store';
+	import { currentUser, setUserContext } from '$lib/context/user';
+	import type { RolesResponse, UsersResponse } from '$lib/models/generated/pb-models';
+	import { pb } from '$lib/pocketbase';
+	import type { Writable } from 'svelte/store';
 	import '../app.css';
+	import { onDestroy } from 'svelte';
 
 	let { data, children } = $props();
 
 	// Initialize user store
-	const user = writable(data.user);
-	setUserContext(user);
+	currentUser.set(data.user);
+	setUserContext(currentUser as Writable<UsersResponse<{ role: RolesResponse }>>);
 
 	if (browser) {
 		// Load user from cookie (client-side only)
@@ -18,7 +19,7 @@
 
 		// Update user store when auth store changes
 		const unsubscribe = pb.authStore.onChange(() => {
-			user.set(pb.authStore.record);
+			currentUser.set(pb.authStore.record as UsersResponse<{ role: RolesResponse }>);
 			document.cookie = pb.authStore.exportToCookie({ httpOnly: false });
 		}, true);
 
@@ -26,6 +27,4 @@
 	}
 </script>
 
-<div class="bg-base-200 h-screen w-screen overflow-x-auto">
-	{@render children()}
-</div>
+{@render children()}

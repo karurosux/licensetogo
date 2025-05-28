@@ -1,0 +1,93 @@
+export default {
+	en: {
+		appName: 'LicenseToGo',
+		general: {
+			login: 'Login',
+			emailAddress: 'Email Address',
+			password: 'Password',
+			users: 'Users',
+			products: 'Products',
+			subjects: 'Subjects',
+			firstName: 'First Name',
+			lastName: 'Last Name',
+			nickName: 'Nick Name',
+			name: 'Name',
+			branch: 'Branch',
+			birthdate: 'Birthdate',
+			role: 'Role',
+			createdAt: 'Created At',
+			updatedAt: 'Updated At',
+			previous: 'Previous',
+			next: 'Next',
+			open: 'Open',
+			goBack: 'Go Back',
+			edit: 'Edit',
+			expires: 'Expires',
+			licenses: 'Licenses',
+			search: 'Search',
+			metadata: 'Metadata',
+			permissions: 'Permissions',
+			active: 'Active',
+			noContent: 'No Content',
+			delete: 'Delete',
+			cancel: 'Cancel',
+			apiKeys: 'API Keys',
+			home: 'Home',
+			settings: 'Settings',
+		},
+		errorPage: {
+			notFound: {
+				title: 'Page not found',
+				description: 'Sorry, we couldn’t find the page you’re looking for.',
+			},
+			forbidden: {
+				title: 'Forbidden',
+				description: 'You should not be here... please go back home.',
+			},
+			goBack: 'Go back home',
+		},
+		login: {
+			header: 'Sign in into yout account',
+			forgotPassword: 'Forgot Password?',
+			signIn: 'Sign In',
+			loginFailed: 'Login failed, please try again.',
+		},
+		langs: {
+			en: 'English',
+			es: 'Español',
+			th: 'Thai',
+		},
+		userMenu: {
+			openUserMenu: 'Open user menu',
+			signOut: 'Sign Out',
+		},
+		licenseManager: {
+			title: 'License Manager',
+			descriptions: 'All registered licenses in your application.',
+			createLicense: {
+				title: 'Create License',
+				description: 'Create a license for your application.',
+				createError: 'Something wrong happened while creating the license, please try again.',
+			},
+			deleteLicense: {
+				title: 'Delete License',
+				message: 'Are you sure you want to delete the license "{{name}}"?',
+			},
+		},
+		apiKeyManager: {
+			title: 'API Keys Manager',
+			descriptions:
+				'Authentication tokens for secure programmatic access to endpoints, each associated with specific scopes and usage limitations.',
+			createAPIKey: {
+				title: 'Create API Key',
+				description:
+					'Generate an API Key to seamlessly integrate license key creation directly within your application via our secure endpoints.',
+				createError: 'Something wrong happened while creating the API Key, please try again.',
+			},
+			deleteAPIKey: {
+				title: 'Delete API Key',
+				message: 'Are you sure you want to delete the API Key "{{name}}"?',
+			},
+		},
+	},
+}
